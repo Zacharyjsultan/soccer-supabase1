@@ -27,7 +27,9 @@ nameForm.addEventListener('submit', (e) => {
     // set the state to this data from the form
     name1 = data.get('team-one');
     name2 = data.get('team-two');
-    
+
+    teamOneLabel.textContent = name1;
+    teamTwoLabel.textContent = name2;
     // reset the form values
     nameForm.reset();
     displayCurrentGameEl();
@@ -55,9 +57,15 @@ teamTwoSubtractButton.addEventListener('click', () => {
 
 finishGameButton.addEventListener('click', async () => {
     // create a new game using the current game state
-    const currentGameData
+    const currentGameData = {
+        name1: name1,
+        name2: name2,
+        score1: score1,
+        score2: score2,
+    };
 
     // after creating this new game, re-fetch the games to get the updated state and display them (hint: call displayAllGames())
+    displayAllGames();
 
     name1 = '';
     name2 = '';
@@ -74,10 +82,14 @@ window.addEventListener('', async () => {
 
 function displayCurrentGameEl() {
     // clear out the current game div
+    currentGameEl.textContent = '';
     // change the label to show team one's name;
+      // call the render game function to create a game element
+    const gameEl = renderGame({ name1, name2, score1, score2 });
     // change the label to show team two's name;
-    // call the render game function to create a game element
+  
     // append the element to the cleared out current game div
+    currentGameEl.append(gameEl);
 }
 
 function displayAllGames() {
