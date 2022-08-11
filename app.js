@@ -3,7 +3,7 @@ import { renderGame } from './render-utils.js';
 
 const currentGameEl = document.getElementById('current-game-container');
 const pastGamesEl = document.getElementById('past-games-container');
-const logoutButton = document.getElementById('logout');
+
 
 const nameForm = document.getElementById('name-form');
 const teamOneAddButton = document.getElementById('team-one-add-button');
@@ -20,45 +20,53 @@ let score1 = 0;
 let score2 = 0;
 
 nameForm.addEventListener('submit', (e) => {
-    // don't forget to prevent the default form behavior!
 
-    // get the name data from the form
+    e.preventDefault();
 
-    // set the state to this data from the form
+    const data = new FormData(nameForm);
 
-    // reset the form values
+    name1 = data.get('team-one');
+    name2 = data.get('team-two');
 
+    teamOneLabel.textContent = name1;
+    teamTwoLabel.textContent = name2;
+
+    nameForm.reset();
     displayCurrentGameEl();
 });
 
 teamOneAddButton.addEventListener('click', () => {
-    // increment the current state for team one's score
-
+    score1++;
     displayCurrentGameEl();
 });
 
 teamTwoAddButton.addEventListener('click', () => {
-    // increment the current state for team two's score
-
+    score2++;
     displayCurrentGameEl();
 });
 
 teamOneSubtractButton.addEventListener('click', () => {
-    // decrement the current state for team one's score
-
+    score1--;
     displayCurrentGameEl();
 });
 
 teamTwoSubtractButton.addEventListener('click', () => {
-    // decrement the current state for team two's score
-
+    score2--;
     displayCurrentGameEl();
 });
 
 finishGameButton.addEventListener('click', async () => {
-    // create a new game using the current game state
+   
+    const currentGameData = {
+        name1: name1,
+        name2: name2,
+        score1: score1,
+        score2: score2,
+    };
 
-    // after creating this new game, re-fetch the games to get the updated state and display them (hint: call displayAllGames())
+    await createGame(currentGameData);
+
+    displayAllGames();
 
     name1 = '';
     name2 = '';
@@ -68,24 +76,38 @@ finishGameButton.addEventListener('click', async () => {
     displayCurrentGameEl();
 });
 
-// on load . . .
+
 window.addEventListener('', async () => {
-    // display all past games (hint: call displayAllGames())
+
+    displayAllGames();
+    
 });
 
 function displayCurrentGameEl() {
-    // clear out the current game div
-    // change the label to show team one's name;
-    // change the label to show team two's name;
-    // call the render game function to create a game element
-    // append the element to the cleared out current game div
+    currentGameEl.textContent = '';
+
+    const gameEl = renderGame({ name1, name2, score1, score2 });
+ 
+    currentGameEl.append(gameEl);
 }
 
-function displayAllGames() {
-    // clear out the past games list in the DOM
-    // FETCH ALL GAMES from supabase
+async function displayAllGames() {
+
+    const pastGames = await getGames();
+    pastGamesEl.textContent = '';
+   
+
     // loop through the past games
-    // render and append a past game for each past game in state
+    for (let game of pastGames) {
+        
+        const gameEl = renderGame (game.name1, game.name2, game.score1, game.score2);
+
+        gameEl.classList.add('past');
+        pastGamesEl.append(gameEl);
+    }
+    
+    
+
 }
 
 displayCurrentGameEl();
